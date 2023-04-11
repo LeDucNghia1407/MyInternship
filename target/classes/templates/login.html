@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Form</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+    .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    }
+
+    #myForm {
+        width: 400px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Style form labels */
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    /* Style form inputs */
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+
+    /* Style form submit button */
+    button[type="submit"] {
+        background-color: #007bff;
+        border: none;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #0069d9;
+    }
+
+    /* Style error messages */
+    .error-message {
+        color: #dc3545;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    /* Style link to registration page */
+    .card-footer a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .card-footer a:hover {
+        text-decoration: underline;
+    }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form id="myForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" class="form-control" id="username" name="username" >
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                </div>
+
+                <input type="checkbox" onclick="myFunction()">Show Password
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <div id="login-result"></div>
+            <div class="card-footer text-center" style="display: flex; justify-content: center;">
+                Don't have an account yet? <a href="register">Register</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Bootstrap JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<!-- Your JavaScript file -->
+<script src="script.js"></script>
+<script>
+
+        function myFunction() {
+          var x = document.getElementById("password");
+          if (x.type === "password") {
+            x.type = "text";
+          } else {
+            x.type = "password";
+          }
+        }
+
+
+        $(document).ready(function() {
+    $('#myForm').submit(function(event) {
+        event.preventDefault();
+        var username = $('#username').val();
+        var password = $('#password').val();
+        $.ajax({
+            type: 'POST',
+            url: '/api/v1/backend/Login/login',
+            data: {username: username, password: password},
+            success: function(response) {
+                if (response == 'success') {
+                    $('#login-result').html('Login successful.');
+
+                    // Redirect to the main page with the username as a query parameter
+                    window.location.href = "main?username=" + encodeURIComponent(username);
+                } else {
+                    $('#login-result').html('Login failed.');
+                }
+            }
+        });
+    });
+});
+
+
+
+
+
+
+    </script>
+</body>
+</html>

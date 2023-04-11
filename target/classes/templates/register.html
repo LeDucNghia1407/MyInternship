@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Button Example</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" integrity="sha512-2QcVfH+x+pq1CJ55d3Yq3SCK/N5PHoJx8V70WJ5v1l4F1f4D2hVWiaYEQwJ5SfS5NLSu9XWme5dO79dq4e4M4Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+  background-color: #f2f2f2;
+}
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  padding: 20px;
+  margin-top: 30px;
+}
+
+.card-header {
+  background-color: #f1f1f1;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  width: 150px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+
+.btn-primary:focus, .btn-primary.focus {
+  box-shadow: 0 0 0 0.2rem rgba(38,143,255,.5);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.card-footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.card-footer a:hover {
+  text-decoration: underline;
+}
+
+.form-group {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-group label {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.form-group input {
+  font-size: 18px;
+  height: 50px;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  padding: 10px;
+  width: 100%;
+  max-width: 400px;
+}
+
+@media (min-width: 768px) {
+  .card {
+    max-width: 500px;
+  }
+
+  .form-group input {
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-group input {
+    max-width: 100%;
+  }
+
+  .btn-primary {
+    width: 100%;
+  }
+}
+
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Register
+                </div>
+                <div class="card-body">
+                    <form  id = "myForm">
+                        <div class="form-group mb-3" style="text-align: center;">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name = "username" placeholder="Enter username" style="margin: 0 auto;" required >
+                        </div>
+                        <div class="form-group mb-3" style="text-align: center;">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name = "password" placeholder="Enter password" style="margin: 0 auto;" required >
+                        </div>
+
+                        <input type="checkbox" onclick="myFunction()">Show Password
+                        <div class="registerButton" style = "text-align: center;">
+                            <button type="submit" class="btn btn-primary" onclick="run()"   style="display: flex; justify-content: center;">Register</button>
+                        </div>
+                    </form>
+                </div>
+                <div id="register-result"></div>
+                <div class="card-footer text-center" style="display: flex; justify-content: center;">
+                    Already have an account? <a href="login">Log in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    function myFunction() {
+          var x = document.getElementById("password");
+          if (x.type === "password") {
+            x.type = "text";
+          } else {
+            x.type = "password";
+          }
+        }
+
+    function run()
+    {
+        callController();
+    }
+
+
+
+    function callController() {
+    if (validateForm())
+        {
+            var username = $("#username").val();
+            var password = $("#password").val();
+            $.ajax({
+                type: "POST",
+                url: "/my-controller-mapping",
+                data: {username: username, password: password},
+                success: function(response) {
+                    if (response == 'success') {
+                    $('#register-result').html('register successful.');
+
+                    // Redirect to the main page with the username as a query parameter
+                    window.location.href = "main?username=" + encodeURIComponent(username);
+                } else {
+                    $('#register-result').html('User had registered.');
+                }
+                }
+            });
+
+
+        }
+
+    }
+
+
+
+    function validateForm() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        if (!username || !password || username.trim() === "" || password.trim() === "") {
+            alert("Please enter both username and password");
+            return false;
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/check-username", false);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.send(JSON.stringify({username: username}));
+
+        if (xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            if (response.exists) {
+                alert("The username already exists. Please choose another one.");
+                return false;
+            }
+        }
+
+        localStorage.setItem("username", username);
+
+        alert("Username accepted");
+            return true;
+    }
+
+
+</script>
+</body>
+</html>
